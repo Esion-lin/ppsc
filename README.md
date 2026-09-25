@@ -69,7 +69,7 @@ target/ppsc/ConfidentialToken/hashes.env
 contracts/src/generated/ConfidentialTokenGateway.sol
 ```
 
-Gateway 不是摆设：部署时它调用 `publishContract/publishFunction`，用户调用它时又通过 `invokeCompiledFor` 在 ControlPlane 创建任务。daemon 会校验链上的 manifest hash 与本地编译产物完全一致后才执行。
+Gateway：部署时它调用 `publishContract/publishFunction`，用户调用它时又通过 `invokeCompiledFor` 在 ControlPlane 创建任务。daemon 会校验链上的 manifest hash 与本地编译产物完全一致后才执行。
 
 ## 当前实现状态
 
