@@ -1,0 +1,115 @@
+#![doc = "Persistence port; database implementations must never log or print sensitive payloads."]
+
+use ppsc_core::{
+    Commitment, CommitteeEpoch, DataId, DataRepresentation, MessageId, NodeId, PublicBytes,
+    SecretBytes, TaskId, TaskStatus,
+};
+use ppsc_protocol::{ProtocolMessage, ProtocolTask};
+use std::{error::Error, fmt, future::Future};
+
+pub struct StoredTask {
+    pub task: ProtocolTask,
+    pub status: TaskStatus,
+    pub checkpoint: Option<PublicBytes>,
+}
+
+pub trait TaskRepository: Send + Sync {
+    fn insert(&self, task: ProtocolTask) -> impl Future<Output = Result<(), StorageError>> + Send;
+    fn get(
+        &self,
+        id: TaskId,
+    ) -> impl Future<Output = Result<Option<StoredTask>, StorageError>> + Send;
+    fn transition(
+        &self,
+        id: TaskId,
+        expected: TaskStatus,
+        next: TaskStatus,
+        checkpoint: Option<PublicBytes>,
+    ) -> impl Future<Output = Result<(), StorageError>> + Send;
+}
+
+pub trait MessageRepository: Send + Sync {
+    fn append_if_absent(
+        &self,
+        message: ProtocolMessage,
+    ) -> impl Future<Output = Result<bool, StorageError>> + Send;
+    fn contains(&self, id: MessageId) -> impl Future<Output = Result<bool, StorageError>> + Send;
+}
+
+pub trait SecretStore: Send + Sync {
+    fn put(
+        &self,
+        task_id: TaskId,
+        value: SecretBytes,
+    ) -> impl Future<Output = Result<(), StorageError>> + Send;
+    fn take(
+        &self,
+        task_id: TaskId,
+    ) -> impl Future<Output = Result<Option<SecretBytes>, StorageError>> + Send;
+}
+
+pub struct StoredFragment {
+    pub data_id: DataId,
+    pub representation: DataRepresentation,
+    pub kind: FragmentKind,
+    pub version: u64,
+    pub commitment: Commitment,
+    pub custodian: NodeId,
+    pub payload: SecretBytes,
+}
+
+pub struct FragmentMetadata {
+    pub data_id: DataId,
+    pub representation: DataRepresentation,
+    pub kind: FragmentKind,
+    pub version: u64,
+    pub commitment: Commitment,
+    pub custodian: NodeId,
+    pub epoch: CommitteeEpoch,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum FragmentKind {
+    ValueShare,
+    FheCiphertext,
+    FheSecretKeyShare,
+    MacKeyShare,
+    MacTagShare,
+    ConversionMask,
+    DegreeReductionPair,
+}
+
+/// Each node only handles shares addressed to it or ciphertexts allowed to be replicated.
+pub trait FragmentRepository: Send + Sync {
+    fn put_if_newer(
+        &self,
+        fragment: StoredFragment,
+    ) -> impl Future<Output = Result<bool, StorageError>> + Send;
+    fn metadata(
+        &self,
+        data_id: DataId,
+    ) -> impl Future<Output = Result<Option<FragmentMetadata>, StorageError>> + Send;
+    fn take(
+        &self,
+        data_id: DataId,
+        version: u64,
+    ) -> impl Future<Output = Result<Option<SecretBytes>, StorageError>> + Send;
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum StorageError {
+    NotFound,
+    Conflict,
+    InvalidTransition,
+    CorruptData,
+    Unavailable,
+    BackendFailure,
+}
+
+impl fmt::Display for StorageError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "storage operation failed: {self:?}")
+    }
+}
+
+impl Error for StorageError {}

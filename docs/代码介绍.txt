@@ -1,0 +1,68 @@
+PPSC 代码介绍 & 演示指南
+========================
+
+一、关键文件（干什么的）
+
+crates/fhe/examples/interactive_demo.rs
+    交互式演示入口（REPL）：create / deposit / withdraw / transfer / balance
+crates/fhe/src/real_backend.rs
+    真密码学后端 FheMpcBackend：实现 ConfidentialBackend（BFV 密文 + 门限解密 + Shamir 分享 + MPC 比较）
+crates/fhe/src/bfv_shamir.rs
+    BFV 门限密钥分享 + H2S（密文→分享）/ S2H（分享→密文）转换
+crates/fhe/src/network_conversion.rs
+    网络化的 H2S / S2H（带 RTT/带宽模拟）
+crates/fhe/cpp/capi.cpp
+    OpenFHE C ABI：加密 / 解密 / 门限解密 / 部分解密 / 序列化
+crates/crypto/src/mpc/
+    MPC 协议层：Shamir 分享、PRSS 预处理、S2B 位分解、比较、条件转移、认证、交接
+crates/runtime/src/lib.rs
+    合约后端接口（ConfidentialBackend = Mpc+Fhe+转换+承诺）+ 明文替身 PlaintextBackend + BalanceRuntime
+crates/runtime/src/bin/private_transfer_demo.rs
+    明文数据流 demo（无密码学，只看 C2S→MPC→S2C 调用链）
+crates/node/src/
+    多节点运行时：handoff / 比较 的网络化闭环（MemoryMailbox 模拟网络）
+
+
+二、怎么演示
+
+环境（每个 shell 先执行）：
+  $env:TMP = "D:\tmp"; $env:TEMP = "D:\tmp"
+  $env:PATH = "C:\msys64\mingw64\bin;" + $env:PATH
+
+【真密码学 · 交互式演示（推荐）】
+  cargo run --target x86_64-pc-windows-gnu -p ppsc-fhe --example interactive_demo
+
+  指令：
+    create <acc>                开户（余额加密 0）
+    deposit <acc> <amt>         入金（金额加密成 BFV 密文，支持小数）
+    withdraw <acc> <amt>        取钱（余额减少）
+    transfer <from> <to> <amt>  转账（MPC 秘密比较，满足才转）
+    balance <acc>               查询余额（门限解密）
+    balance-all                 查询全部
+    quit                        退出
+
+  演示脚本（入金 → 转账 → 查询）：
+    create Amy
+    deposit Amy 100
+    create Bob
+    deposit Bob 20.50
+    transfer Amy Bob 30
+    balance Amy      → 70
+    balance Bob      → 50.50
+    transfer Amy Bob 9999     → 提示余额不足，不转
+
+【明文数据流 demo（讲合约架构，无密码学）】
+  cargo run -p ppsc-runtime --bin private_transfer_demo
+
+【正确性（35 个测试）】
+  cargo test --target x86_64-pc-windows-gnu -p ppsc-fhe -- --test-threads=1
+
+【性能（论文 §4 数据，可选）】
+  cargo bench --target x86_64-pc-windows-gnu -p ppsc-fhe --bench workloads_e2e
+
+
+三、一句话说明
+
+  余额是 BFV 密文存在链下；交易走 H2S（密文→分享）→ MPC 秘密比较 → S2H（分享→密文）；
+  密钥是门限分享的（无单一 KMS）。当前是单进程模拟（3 方密钥 + Shamir 都在一个进程），
+  真分布式在 ppsc-node（MemoryMailbox 网络模拟）。

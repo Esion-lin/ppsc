@@ -1,0 +1,31 @@
+privacy contract ConfidentialToken {
+  private FheUint balance[address];
+
+  function createAccount() public {
+    balance[msg.sender] = FHE.encrypt(0);
+  }
+
+  function deposit(FheUint amount) public {
+    receiveEncryptedToken(amount);
+    balance[msg.sender] = FHE.add(balance[msg.sender], amount);
+  }
+
+  function withdraw(FheUint amount) public {
+    SecretBool sufficient = H2S(FHE.ge(balance[msg.sender], amount));
+    require(sufficient);
+    balance[msg.sender] = FHE.sub(balance[msg.sender], amount);
+    sendEncryptedToken(msg.sender, amount);
+  }
+
+  function transfer(address to, FheUint amount) public {
+    SecretBool sufficient = H2S(FHE.ge(balance[msg.sender], amount));
+    require(sufficient);
+    balance[msg.sender] = FHE.sub(balance[msg.sender], amount);
+    balance[to] = FHE.add(balance[to], amount);
+  }
+
+  function getBalance() public {
+    Sint balanceShare = H2S(balance[msg.sender]);
+    return Pick(balanceShare);
+  }
+}

@@ -1,0 +1,16 @@
+experiment,n,t,src_degree,dst_degree,holder_sets_src,holder_sets_dst,seed_count,seed_per_party_src,seed_per_party_dst,time_ms,total_bytes
+fixed_t2_handoff,5,2,2,2,10,10,100,6,6,0.38,3200
+fixed_t2_handoff,8,2,2,2,28,28,784,21,21,2.01,25088
+fixed_t2_handoff,16,2,2,2,120,120,14400,105,105,26.83,460800
+fixed_t2_handoff,32,2,2,2,496,496,246016,465,465,316.22,7872512
+fixed_t2_handoff,64,2,2,2,2016,2016,4064256,1953,1953,6543.91,130056192
+honest_majority_handoff,5,2,2,2,10,10,100,6,6,1.45,3200
+honest_majority_handoff,7,3,3,3,35,35,1225,20,20,12.21,39200
+honest_majority_handoff,9,4,4,4,126,126,15876,70,70,70.04,508032
+honest_majority_handoff,11,5,5,5,462,462,213444,252,252,417.78,6830208
+honest_majority_handoff,13,6,6,6,1716,1716,2944656,924,924,3242.75,94228992
+honest_majority_mult,5,2,4,2,5,10,50,1,6,1.14,1600
+honest_majority_mult,7,3,6,3,7,35,245,1,20,5.36,7840
+honest_majority_mult,9,4,8,4,9,126,1134,1,70,28.54,36288
+honest_majority_mult,11,5,10,5,11,462,5082,1,252,155.25,162624
+honest_majority_mult,13,6,12,6,13,1716,22308,1,924,839.82,713856

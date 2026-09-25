@@ -1,0 +1,199 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================================================================
+   主题变量
+   浅色：政务青蓝，强调可信、清爽、现代。
+   深色：按需求以金棕色 #BD7C40 为主色，强调科技感与重点信息。
+   ========================================================================= */
+
+:root {
+  /* Local-first font stacks: builds and previews do not require Google Fonts. */
+  --font-inter: 'Inter', 'PingFang SC', ui-sans-serif, system-ui, sans-serif;
+  --font-poppins: 'Poppins', 'PingFang SC', ui-sans-serif, system-ui, sans-serif;
+  --default-color: #286d78;
+  --default-color-hover: #1d5661;
+  --accent-color: #bd7c40;
+  --accent-color-hover: #9f642f;
+  --list-item-hover-color: #e8f3f4;
+  --action-hover: #d7eaed;
+
+  --primary-background: #f4f7f8;
+  --secondary-background: #ffffff;
+  --other-background: #edf4f5;
+  --default-text-color: #132328;
+  --default-border-color: rgb(40 109 120 / 0.18);
+
+  --success-color: #24c197;
+  --warning-color: #bd7c40;
+  --box-shadow-color: rgb(20 44 50 / 0.16);
+  --placeholder-color: #8fa1a7;
+  --dropdown-bgc: #ffffff;
+  --dropdown-hover: #eef6f7;
+  --icon-color: #638087;
+  --desc-color: #536a72;
+  --link-color: #286d78;
+  --hero-from: #0e2930;
+  --hero-via: #164a54;
+  --hero-to: #bd7c40;
+  --panel-background: rgb(255 255 255 / 0.78);
+  --glass-background: rgb(255 255 255 / 0.14);
+  --ring-color: rgb(40 109 120 / 0.35);
+
+  --lift-shadow: 0 18px 45px -28px var(--box-shadow-color);
+  --focus-shadow: 0 0 0 4px var(--ring-color);
+}
+
+[data-theme='dark'] {
+  --default-color: #bd7c40;
+  --default-color-hover: #d19a66;
+  --accent-color: #5fb7c4;
+  --accent-color-hover: #81d3dd;
+  --list-item-hover-color: rgb(189 124 64 / 0.16);
+  --action-hover: rgb(189 124 64 / 0.22);
+
+  --primary-background: #101315;
+  --secondary-background: #191d20;
+  --other-background: #11171a;
+  --default-text-color: #f7f1ea;
+  --default-border-color: rgb(189 124 64 / 0.24);
+
+  --success-color: #24c197;
+  --warning-color: #bd7c40;
+  --box-shadow-color: rgb(0 0 0 / 0.5);
+  --placeholder-color: #6e7376;
+  --dropdown-bgc: #171a1d;
+  --dropdown-hover: #26201a;
+  --icon-color: #a89584;
+  --desc-color: #c9c1b8;
+  --link-color: #d19a66;
+  --hero-from: #0d1114;
+  --hero-via: #231a13;
+  --hero-to: #bd7c40;
+  --panel-background: rgb(25 29 32 / 0.76);
+  --glass-background: rgb(189 124 64 / 0.12);
+  --ring-color: rgb(189 124 64 / 0.35);
+
+  --lift-shadow: 0 22px 54px -34px rgb(189 124 64 / 0.45);
+  --focus-shadow: 0 0 0 4px var(--ring-color);
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-poppins), 'Poppins', ui-sans-serif, system-ui,
+      sans-serif;
+    background: var(--primary-background);
+    /* 网格纹理（暂注释，需要时取消注释）
+    background:
+      linear-gradient(90deg, rgb(40 109 120 / 0.035) 1px, transparent 1px),
+      linear-gradient(180deg, rgb(189 124 64 / 0.03) 1px, transparent 1px),
+      var(--primary-background);
+    background-size: 56px 56px;
+    */
+    color: var(--default-text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  a:hover {
+    color: var(--default-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-inter), 'Inter', ui-sans-serif, system-ui,
+      sans-serif;
+  }
+
+  ::selection {
+    background-color: var(--default-color);
+    color: #fff;
+  }
+
+  button,
+  a {
+    outline: none;
+  }
+
+  button:focus-visible,
+  a:focus-visible {
+    box-shadow: var(--focus-shadow);
+  }
+}
+
+@layer components {
+  .text-gradient {
+    background: linear-gradient(90deg, var(--default-color), var(--accent-color));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    @apply font-bold;
+  }
+
+  .btn-gradient {
+    background: linear-gradient(90deg, var(--default-color), var(--accent-color));
+    @apply border-0 hover:shadow-lg;
+  }
+
+  .btn-primary {
+    background-color: var(--default-color);
+    color: #fff;
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-6 py-2.5 text-sm font-semibold transition;
+  }
+
+  .btn-primary:hover {
+    background-color: var(--default-color-hover);
+    transform: translateY(-1px);
+  }
+
+  .surface {
+    background: var(--panel-background);
+    border-color: var(--default-border-color);
+    box-shadow: var(--lift-shadow);
+    @apply border backdrop-blur-xl;
+  }
+
+  .tech-grid {
+    background-image:
+      linear-gradient(rgb(255 255 255 / 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(255 255 255 / 0.08) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  .focus-ring {
+    @apply transition;
+  }
+
+  .focus-ring:focus-visible {
+    box-shadow: var(--focus-shadow);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

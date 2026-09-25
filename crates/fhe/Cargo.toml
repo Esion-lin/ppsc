@@ -1,0 +1,47 @@
+[package]
+name = "ppsc-fhe"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[build-dependencies]
+cc = "1.0"
+
+[dependencies]
+ppsc-core = { path = "../core" }
+ppsc-crypto = { path = "../crypto" }
+ppsc-network = { path = "../network" }
+ppsc-runtime = { path = "../runtime" }
+ppsc-compiler = { path = "../compiler" }
+ark-ff = "0.4"
+ark-bn254 = "0.4"
+rand = "0.8"
+serde_json = "1"
+
+[dev-dependencies]
+criterion = { version = "0.5", features = ["html_reports"] }
+ppsc-node = { path = "../node" }
+
+[[bench]]
+name = "conversion"
+harness = false
+
+[[bench]]
+name = "transfer"
+harness = false
+
+[[bench]]
+name = "conversion_network"
+harness = false
+
+[[bench]]
+name = "workloads_e2e"
+harness = false
+
+[[bench]]
+name = "hybrid_ablation_fhe"
+harness = false
+
+[lints]
+workspace = true

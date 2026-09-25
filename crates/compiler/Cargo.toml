@@ -1,0 +1,18 @@
+[package]
+name = "ppsc-compiler"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tiny-keccak = { version = "2", features = ["keccak"] }
+
+[lints]
+workspace = true
+
+[[bin]]
+name = "ppsc"
+path = "src/main.rs"

@@ -1,0 +1,53 @@
+# Rust build output (keep Cargo.lock)
+/target/
+**/*.rs.bk
+
+# Foundry build output and deployment records
+/contracts/out/
+/contracts/cache/
+/broadcast/
+
+# Local OpenFHE checkout
+/openfhe-development/
+
+# Frontend dependencies, build output, and caches
+node_modules/
+.next/
+/front-blockchains-new/out/
+/front-blockchains-new/build/
+.vercel/
+*.tsbuildinfo
+
+# Python caches and virtual environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local environment files (keep shareable templates)
+.env
+.env.*
+!.env.example
+!.env.*.example
+!.env.sample
+!.env.template
+
+# Logs and test coverage
+*.log
+*.log.*
+coverage/
+.coverage
+.coverage.*
+htmlcov/
+
+# OS metadata and editor temporary files
+.DS_Store
+._*
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
